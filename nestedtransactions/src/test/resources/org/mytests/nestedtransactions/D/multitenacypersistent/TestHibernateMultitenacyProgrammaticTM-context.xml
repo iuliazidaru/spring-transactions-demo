@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx
+     http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop 
+     http://www.springframework.org/schema/aop/spring-aop.xsd
+     http://www.springframework.org/schema/util 
+     http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- this is the service object that we want to make transactional -->
+	<bean id="userService"
+		class="org.mytests.nestedtransactions.service.PersistentUserService">
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+	<bean id="userDao" class="org.mytests.nestedtransactions.dao.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	 <bean id="contentService" class="org.mytests.nestedtransactions.service.DefaultContentService"/>
+	 
+	 <bean id="provisioningService" class="org.mytests.nestedtransactions.service.DefaultProvisioningService">
+	  	<property name="userService" ref="userService"/>
+	  	<property name="contentService" ref="contentService"/>
+	 </bean>
+
+	<bean id="sessionFactory"
+		class="org.mytests.nestedtransactions.dao.hibernate.MultiDataSourceSessionFactoryBean">
+		<property name="dataSourceMap" ref="dataSource"/> 
+		<property name="annotatedPackages" ref="hibernateAnnotatedPackages"/>
+		<property name="packagesToScan" ref="hibernatePackagesToScan"/>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DerbyDialect</prop>
+				
+				<prop key="hibernate.connection.datasource"></prop>
+				
+				<prop key="hibernate.multiTenancy">DATABASE</prop>
+				<prop key="hibernate.tenant_identifier_resolver">org.mytests.nestedtransactions.dao.hibernate.MultiTenantIdentifierResolver</prop>
+				<prop key="hibernate.multi_tenant_connection_provider">org.mytests.nestedtransactions.dao.hibernate.MultiTenantConnectionProvider</prop>
+				<prop key="hibernate.multi_tenant.datasource.identifier_for_any">US1</prop>
+				
+				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> 
+				For multi tenacy configuration, this setting doesn't work. Use MultitenacyDbIitializer instead.
+				-->
+				
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- simple Session factory used to check that the data is properly inserted. -->
+	<bean id="sessionFactoryUS1"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceUS1"/> 
+		<property name="annotatedPackages" ref="hibernateAnnotatedPackages"/>
+		<property name="packagesToScan" ref="hibernatePackagesToScan"/>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DerbyDialect</prop>				
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="sessionFactoryEU1"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceEU1"/> 
+		<property name="annotatedPackages" ref="hibernateAnnotatedPackages"/>
+		<property name="packagesToScan" ref="hibernatePackagesToScan"/>
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.DerbyDialect</prop>				
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+	
+	
+<util:list id="hibernateAnnotatedPackages">
+	<value>org.mytests.nestedtransactions.model</value>
+</util:list>
+
+<util:list id="hibernatePackagesToScan">
+	<value>org.mytests.nestedtransactions.model</value>
+</util:list>
+
+
+<!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean 
+	below) -->
+<!-- <tx:advice id="txAdvice" transaction-manager="txManager">
+	the transactional semantics...
+	<tx:attributes>
+		all methods starting with 'get' are read-only
+		<tx:method name="load*" read-only="true" />
+		other methods use the default transaction settings (see below)
+		<tx:method name="*" />
+	</tx:attributes>
+</tx:advice> -->
+
+<!-- ensure that the above transactional advice runs for any execution of 
+	an operation defined by the FooService interface -->
+<!-- <aop:config>
+	<aop:pointcut id="serviceOperation"
+		expression="execution(* org.mytests.nestedtransactions.service.*Service.*(..))" />
+	<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+</aop:config> -->
+
+
+<util:map id="dataSource">
+	<entry key="US1" value-ref="dataSourceUS1"/>
+	<entry key="EU1" value-ref="dataSourceEU1"/>
+</util:map>
+
+<!-- don't forget the DataSource -->
+<bean id="dataSourceUS1" class="org.apache.commons.dbcp.BasicDataSource"
+	destroy-method="close">
+	<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+	<property name="url" value="jdbc:derby:US1;create=true" />
+	<property name="username" value="myuser" />
+	<property name="password" value="pass" />
+</bean>
+<bean id="dataSourceEU1" class="org.apache.commons.dbcp.BasicDataSource"
+	destroy-method="close">
+	<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+	<property name="url" value="jdbc:derby:EU1;create=true" />
+	<property name="username" value="myuser" />
+	<property name="password" value="pass" />
+</bean>
+
+<!-- similarly, don't forget the PlatformTransactionManager -->
+<!-- <bean id="txManager"
+	class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+	p:autodetectDataSource="false" p:sessionFactory-ref="sessionFactory"/> -->
+
+<bean id="multitenacyDBInitializer" class=" org.mytests.nestedtransactions.dao.hibernate.MultitenacyDBInitializer"
+	  init-method="initialiseBD"
+	  p:sessionFactoryBean-ref="&amp;sessionFactory"
+	  p:dataSourceMap-ref="dataSource"/>
+
+<!-- other <bean/> definitions here -->
+
+</beans>
