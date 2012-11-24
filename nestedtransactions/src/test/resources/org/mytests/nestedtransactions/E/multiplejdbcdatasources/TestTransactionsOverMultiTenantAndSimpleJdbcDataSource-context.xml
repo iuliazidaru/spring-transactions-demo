@@ -138,7 +138,7 @@
 
 <bean id="dataSourceCollections" class="com.atomikos.jdbc.AtomikosDataSourceBean"
     init-method="init" destroy-method="close">
-    <property name="uniqueResourceName" value="dbResourceCollections" />
+    <property name="uniqueResourceName" value="dbResourceCollections2" /><!-- unique name in JVM while running tests -->
     <property name="xaDataSourceClassName" value="org.apache.derby.jdbc.EmbeddedXADataSource" />
     <property name="xaProperties">
         <props>

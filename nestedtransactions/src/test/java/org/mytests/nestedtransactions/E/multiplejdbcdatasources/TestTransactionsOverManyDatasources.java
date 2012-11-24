@@ -1,4 +1,4 @@
-package org.mytests.nestedtransactions.E.multipledatasources;
+package org.mytests.nestedtransactions.E.multiplejdbcdatasources;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
