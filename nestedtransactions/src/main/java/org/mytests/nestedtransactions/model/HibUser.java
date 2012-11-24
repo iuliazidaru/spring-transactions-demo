@@ -6,7 +6,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+/**
+ * 
+ * @author Iulia
+ *
+ */
 @Entity
 @Table(name="users")
 public class HibUser implements User{
@@ -16,6 +22,9 @@ public class HibUser implements User{
 	
 	@Column(name="username")
 	private String username;
+	
+	@Transient
+	private Collection collection;
 
 	public Long getId() {
 		return id;
@@ -27,6 +36,16 @@ public class HibUser implements User{
 
 	public String getUsername() {
 		return username;
+	}
+	
+	
+
+	public Collection getCollection() {
+		return collection;
+	}
+
+	public void setCollection(Collection collection) {
+		this.collection = collection;
 	}
 
 	@Override

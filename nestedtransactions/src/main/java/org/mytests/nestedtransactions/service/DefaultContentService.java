@@ -5,22 +5,29 @@ import org.mytests.nestedtransactions.model.Collection;
 public class DefaultContentService implements ContentService{
 	private boolean fail = false;
 	
-	public void createCollection(Collection c) {
+	public Collection createCollection(Collection c) {
 		System.out.println("DefaultContentService.createCollection()");
 		if(fail){
 			throw new RuntimeException();
-		}		
+		}
 		
+		return c;		
 	}
 
-	@Override
-	public Collection loadCollection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public void setFail(boolean fail) {
 		this.fail = fail;
+	}
+
+
+
+	
+
+
+	@Override
+	public Collection loadCollection(Long id) {
+		return null;
 	}
 }

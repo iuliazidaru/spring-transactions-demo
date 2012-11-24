@@ -4,9 +4,9 @@ import org.mytests.nestedtransactions.model.Collection;
 
 public interface ContentService {
 	
-	public void createCollection(Collection c);
-	
-	public Collection loadCollection();
-	
+	public Collection createCollection(Collection c);
+		
 	public void setFail(boolean fail);
+
+	public Collection loadCollection(Long id);
 }

@@ -3,6 +3,11 @@ package org.mytests.nestedtransactions.service;
 import org.mytests.nestedtransactions.dao.UserDao;
 import org.mytests.nestedtransactions.model.User;
 
+/**
+ * 
+ * @author Iulia
+ *
+ */
 public class PersistentUserService implements UserService{
 	private UserDao userDao;
 	

@@ -69,6 +69,8 @@ public class TestHibernateMultitenacyProgrammaticTM {
 	@Before
 	public void before(){
 		//must bind the session to current thread for making Hibernate work
+		//<prop key="current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
+		// SpringSessionContext looks into TransactionSynchronizationManager
 		Session session = SessionFactoryUtils.openSession(sessionFactory);
 		TransactionSynchronizationManager.bindResource(sessionFactory, new SessionHolder(session));
 		
@@ -78,7 +80,6 @@ public class TestHibernateMultitenacyProgrammaticTM {
 		Session sessionEU = SessionFactoryUtils.openSession(sessionFactoryEU1);
 		TransactionSynchronizationManager.bindResource(sessionFactoryEU1, new SessionHolder(sessionEU));
 		
-		System.out.println("TestHibernateMultitenacyProgrammaticTM.before()" + sessionFactory.getAllClassMetadata());
 	}
 	
 	

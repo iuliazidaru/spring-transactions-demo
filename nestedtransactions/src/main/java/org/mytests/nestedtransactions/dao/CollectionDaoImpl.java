@@ -1,21 +1,19 @@
 package org.mytests.nestedtransactions.dao;
 
-import java.util.Set;
-
 import org.mytests.nestedtransactions.model.Collection;
+import org.mytests.nestedtransactions.model.HibCollection;
 
 public class CollectionDaoImpl extends AbstractDaoImpl implements CollectionDao{
 
 	@Override
-	public void createCollection(Collection c) {
-		getSession().save(c);
+	public long createCollection(Collection c) {
+		return Long.parseLong(getSession().save(c).toString());		
 		
 	}
 
 	@Override
-	public Set<Collection> loadCollection() {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection loadCollection(long id) {
+		return (Collection)getSession().byId(HibCollection.class).load(id);		
 	}
 
 }
