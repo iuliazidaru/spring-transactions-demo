@@ -15,6 +15,8 @@
 		<spring.version>3.1.2.RELEASE</spring.version>
 		<aspectj-version>1.6.11</aspectj-version>
 		<slf4j-version>1.6.4</slf4j-version>
+		<activemq.version>5.3.0</activemq.version>
+		<atomikos.version>3.8.0</atomikos.version>
 	</properties>
 
 	<dependencies>
@@ -31,6 +33,11 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jms</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
@@ -130,19 +137,38 @@
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions</artifactId>
-			<version>3.8.0</version>
+			<version>${atomikos.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jta</artifactId>
-			<version>3.8.0</version>
+			<version>${atomikos.version}</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>com.atomikos</groupId>
 			<artifactId>transactions-jdbc</artifactId>
-			<version>3.8.0</version>
+			<version>${atomikos.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.atomikos</groupId>
+			<artifactId>transactions-jms</artifactId>
+			<version>${atomikos.version}</version>
+		</dependency>
+		
+		<!-- ActiveMQ -->
+		<dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-core</artifactId>
+            <version>${activemq.version}</version>
+        </dependency>
+        
+         <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+            <version>3.6</version>
+        </dependency>   
 	</dependencies>
 </project>
