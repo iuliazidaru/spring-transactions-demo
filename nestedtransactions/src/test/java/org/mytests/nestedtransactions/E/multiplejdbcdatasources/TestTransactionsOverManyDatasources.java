@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mytests.nestedtransactions.D.multitenacypersistent.UserServiceProxy;
+import org.mytests.nestedtransactions.model.HibUser;
 import org.mytests.nestedtransactions.model.User;
 import org.mytests.nestedtransactions.service.ContentService;
 import org.mytests.nestedtransactions.service.ProvisioningService;
@@ -123,5 +124,16 @@ public class TestTransactionsOverManyDatasources {
 		
 		assertThat(userService.loadUser(u.getId()), nullValue());
 
+	}
+	
+	@Test
+	public void loadTestSimpleTransaction(){
+		//see log!!
+		long start = System.currentTimeMillis();
+		for(int i = 0; i < 5000; i++){
+			userService.createUser(new HibUser());
+		}
+		System.out
+				.println("Total time: " + (System.currentTimeMillis() - start));
 	}
 }
